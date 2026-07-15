@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import api from '../../../lib/api';
 import { Election } from '../../../types/election';
@@ -26,7 +26,7 @@ interface ElectionResult {
   winner: ResultCandidate | null;
 }
 
-export default function HasilPemilihanPage() {
+function HasilPemilihanContent() {
   const searchParams = useSearchParams();
 
   const [loading, setLoading] = useState(true);
@@ -99,6 +99,14 @@ export default function HasilPemilihanPage() {
          results && <ResultsDashboard results={results} />
       )}
     </div>
+  );
+}
+
+export default function HasilPemilihanPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-[60vh]"><span className="material-symbols-outlined animate-spin text-[40px] text-primary">progress_activity</span></div>}>
+      <HasilPemilihanContent />
+    </Suspense>
   );
 }
 
