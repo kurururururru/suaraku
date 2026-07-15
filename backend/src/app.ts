@@ -32,6 +32,23 @@ app.use((req, _res, next) => {
   next();
 });
 
+// Lazy database initialization middleware for Vercel Serverless
+let dbInitialized = false;
+app.use(async (_req, res, next) => {
+  if (!dbInitialized) {
+    try {
+      await initializeDatabase();
+      console.log('[DB] Database initialized successfully');
+      dbInitialized = true;
+    } catch (error) {
+      console.error('[DB] Failed to initialize database:', error);
+      res.status(500).json({ success: false, message: 'Database initialization failed' });
+      return;
+    }
+  }
+  next();
+});
+
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/votes', voteRoutes);
@@ -56,24 +73,16 @@ app.use((err: any, _req: express.Request, res: express.Response, _next: express.
   res.status(500).json({ success: false, message: 'Internal server error' });
 });
 
-// Initialize database and start server
-(async () => {
-  try {
-    await initializeDatabase();
-    console.log('[DB] Database initialized successfully');
-    
-    app.listen(PORT, () => {
-      console.log('═══════════════════════════════════════════');
-      console.log('  SuaraKu E-Voting System - Backend');
-      console.log(`  Server running on http://localhost:${PORT}`);
-      console.log('  Crypto: AES-GCM + HMAC-SHA256 + RSA-PSS');
-      console.log('═══════════════════════════════════════════');
-    });
-  } catch (error) {
-    console.error('[DB] Failed to initialize database:', error);
-    process.exit(1);
-  }
-})();
+// Start server only if not running on Vercel
+if (process.env.VERCEL !== '1') {
+  app.listen(PORT, () => {
+    console.log('═══════════════════════════════════════════');
+    console.log('  SuaraKu E-Voting System - Backend');
+    console.log(`  Server running on http://localhost:${PORT}`);
+    console.log('  Crypto: AES-GCM + HMAC-SHA256 + RSA-PSS');
+    console.log('═══════════════════════════════════════════');
+  });
+}
 
 export default app;
 

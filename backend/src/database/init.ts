@@ -4,7 +4,8 @@ import bcrypt from 'bcryptjs';
 import path from 'path';
 import fs from 'fs';
 
-const DB_PATH = path.join(__dirname, '..', '..', 'database.db');
+const isVercel = process.env.VERCEL === '1';
+const DB_PATH = isVercel ? '/tmp/database.db' : path.join(__dirname, '..', '..', 'database.db');
 const SCHEMA_PATH = path.join(__dirname, 'schema.sql');
 
 let db: Database;
