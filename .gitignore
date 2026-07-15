@@ -1,0 +1,9 @@
+node_modules/
+.next/
+dist/
+database.db
+database.db-shm
+database.db-wal
+.env
+temp_keys.txt
+e2e-report-output.json
