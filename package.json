@@ -1,0 +1,10 @@
+{
+  "name": "suaraku",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "cd backend && npm install && npm run build && npm start"
+  },
+  "engines": {
+    "node": "18.x"
+  }
+}
